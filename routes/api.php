@@ -9,8 +9,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('/holidayplans', [HolidayPlanController::class, 'index']);
-Route::post('/holidayplans', [HolidayPlanController::class, 'store']);
-Route::get('/holidayplans/{$holidayPlan}', [HolidayPlanController::class, 'getHolidayPlan']);
-Route::put('/holidayplans/{$holidayPlan}', [HolidayPlanController::class, 'update']);
-Route::delete('/holidayplans/{$holidayPlan}', [HolidayPlanController::class, 'destroy']);
+Route::get('/holidayplans', [HolidayPlanController::class, 'index'])->name('holidayPlans.index');
+Route::post('/holidayplans', [HolidayPlanController::class, 'store'])->name('holidayPlans.store');
+Route::get('/holidayplans/{holidayPlan}', [HolidayPlanController::class, 'show'])->name('holidayPlans.show');
+Route::put('/holidayplans/{holidayPlan}', [HolidayPlanController::class, 'update'])->name('holidayPlans.update');
+Route::delete('/holidayplans/{$holidayplan}', [HolidayPlanController::class, 'destroy'])->name('holidayPlans.destroy');

@@ -10,7 +10,22 @@ class HolidayPlanController extends Controller
     public function index()
     {
         $holidayPlans = HolidayPlan::all();
-        return response()->json($holidayPlans);
+        $data = [];
+        foreach ($holidayPlans as $holidayPlan) {
+            $resource = [
+                'title' => $holidayPlan->title,
+                'description' => $holidayPlan->description,
+                'date' => $holidayPlan->date,
+                'location' => $holidayPlan->location,
+                'participants' => $holidayPlan->participants,
+                '_links' => [
+                    'self' => route('holidayPlans.show', ['holidayPlan' => $holidayPlan->id]),
+                    'rel' => 'self'
+                ]
+            ];
+            $data[] = $resource;
+        }
+        return response()->json($data);
     }
 
 
@@ -29,9 +44,21 @@ class HolidayPlanController extends Controller
 
     }
 
-    public function getHolidayPlan(HolidayPlan $holidayPlan)
+    public function show(HolidayPlan $holidayPlan)
     {
-        return response()->json($holidayPlan);
+        $holidayPlan = HolidayPlan::find($holidayPlan->id);
+
+        $resource = [
+            'title' => $holidayPlan->title,
+            'description' => $holidayPlan->description,
+            'date' => $holidayPlan->date,
+            'location' => $holidayPlan->location,
+            'participants' => $holidayPlan->participants,
+            '_links' => [
+                'Holiday plans List' => route('holidayPlans.index'),
+            ]
+        ];
+        return response()->json($resource);
     }
 
     public function update(Request $request, HolidayPlan $holidayPlan)
@@ -53,7 +80,6 @@ class HolidayPlanController extends Controller
         $holidayPlan->delete();
 
         return response()->json(null, 204);
-
     }
 
     public function pdfGenerate()

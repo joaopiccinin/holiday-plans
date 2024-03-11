@@ -3,7 +3,7 @@ version: "3.9"
 services:
   holidayplans:
     container_name: holidayplans
-    image: joaopiccinin/holidayplans:1.0.7
+    image: joaopiccinin/holidayplans:1.1.1
     build: .
     ports:
       - "8000:8000"
