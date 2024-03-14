@@ -3,13 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Models\HolidayPlan;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 
 class HolidayPlanController extends Controller
 {
     public function index()
     {
-        $holidayPlans = HolidayPlan::all();
+        $holidayPlans = HolidayPlan::orderBy('date')->get();
         $data = [];
         foreach ($holidayPlans as $holidayPlan) {
             $resource = [
@@ -25,29 +27,30 @@ class HolidayPlanController extends Controller
             ];
             $data[] = $resource;
         }
-        return response()->json($data);
+        return response()->json($data, 200);
     }
 
 
     public function store(Request $request)
     {
-        $validatedData = $request->validate([
-            'title' => 'required',
-            'description' => 'required',
-            'date' => 'required|date',
-            'location' => 'required',
-        ]);
+        try {
+            $validatedData = $request->validate([
+                'title' => 'required',
+                'description' => 'required',
+                'date' => 'required|date_format:Y-m-d',
+                'location' => 'required',
+                'participants' => 'nullable|string'
+            ]);
+            $holidayPlan = HolidayPlan::create($validatedData);
 
-        $holidayPlan = HolidayPlan::create($validatedData);
-
-        return response()->json($holidayPlan, 201);
-
+            return response()->json($holidayPlan, 201);
+        } catch (ValidationException $e) {
+            return response()->json(['errors' => $e->errors()], 422);
+        }
     }
 
     public function show(HolidayPlan $holidayPlan)
     {
-        $holidayPlan = HolidayPlan::find($holidayPlan->id);
-
         $resource = [
             'title' => $holidayPlan->title,
             'description' => $holidayPlan->description,
@@ -58,28 +61,32 @@ class HolidayPlanController extends Controller
                 'Holiday plans List' => route('holidayPlans.index'),
             ]
         ];
-        return response()->json($resource);
+        return response()->json($resource, 200);
     }
 
     public function update(Request $request, HolidayPlan $holidayPlan)
     {
-        $validatedData = $request->validate([
-            'title' => 'required',
-            'description' => 'required',
-            'date' => 'required|date',
-            'location' => 'required',
-        ]);
+        try {
+            $validatedData = $request->validate([
+                'title' => 'required',
+                'description' => 'required',
+                'date' => 'required|date_format:Y-m-d',
+                'location' => 'required',
+                'participants' => 'nullable|string'
+            ]);
+            $holidayPlan->update($validatedData);
 
-        $holidayPlan->update($validatedData);
-
-        return response()->json($holidayPlan, 200);
+            return response()->json($holidayPlan, 200);
+        } catch (ValidationException $e) {
+            return response()->json(['errors' => $e->errors()], 422);
+        }
     }
 
-    public function delete(HolidayPlan $holidayPlan)
+    public function destroy(HolidayPlan $holidayPlan)
     {
         $holidayPlan->delete();
 
-        return response()->json(null, 204);
+        return response()->json(['message' => 'Deleção concluída com sucesso'], 200);
     }
 
     public function pdfGenerate()
