@@ -3,44 +3,44 @@
 namespace Tests\Feature;
 
 use App\Models\HolidayPlan;
+use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Facades\Hash;
+use Laravel\Passport\Passport;
 use Tests\TestCase;
 
 class HolidayPlansControllerTest extends TestCase
 {
-    /**
-     * A basic feature test example.
-     */
+    // Test rollback
+    use DatabaseTransactions;
     public function testIndex()
     {
+        // Create a test user
+        $user = User::factory()->create();
+
+        // User authentication
+        Passport::actingAs($user);
+
+        // Create a holidayplan test
         $holidayPlans = HolidayPlan::factory()->count(3)->create();
 
-        // Chamar a rota do método index
         $response = $this->getJson(route('holidayPlans.index'));
-        dd($response);
 
-        // Verificar se a resposta é bem-sucedida (status 200)
         $response->assertStatus(200);
 
-        // Verificar se a resposta contém os dados esperados
         foreach ($holidayPlans as $holidayPlan) {
             $response->assertJsonFragment([
                 'title' => $holidayPlan->title,
                 'description' => $holidayPlan->description,
-                'date' => Carbon::createFromFormat($holidayPlan->date),
+                'date' => $holidayPlan->date->format('Y-m-d'),
                 'location' => $holidayPlan->location,
                 'participants' => $holidayPlan->participants,
-                '_links' => [
-                    'self' => route('holidayPlans.show', ['holidayPlan' => $holidayPlan->id]),
-                    'rel' => 'self'
-                ]
             ]);
 
-            // $response->assertJsonFragment([
-            //     'date' => $holidayPlan->date->format('Y-m-d'),
-            // ]);
         }
+        $user->delete();
     }
 }

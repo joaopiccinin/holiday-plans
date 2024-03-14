@@ -19,7 +19,7 @@ class HolidayPlanFactory extends Factory
             'description' => $this->faker->paragraph,
             'date' => $this->faker->dateTimeBetween('+1 week', '+1 year'),
             'location' => $this->faker->city,
-            'participants' => $this->faker->randomNumber(2),
+            'participants' => $this->faker->text(),
         ];
     }
 }
