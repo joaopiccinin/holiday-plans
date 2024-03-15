@@ -39,8 +39,6 @@ class HolidayPlansControllerTest extends TestCase
                 'location' => $holidayPlan->location,
                 'participants' => $holidayPlan->participants,
             ]);
-
         }
-        $user->delete();
     }
 }
