@@ -16,4 +16,6 @@ RUN composer install --no-scripts --no-autoloader
 
 RUN composer require --dev phpunit/phpunit
 
+RUN composer require barryvdh/laravel-dompdf
+
 CMD php artisan serve --host=0.0.0.0 --port=8000

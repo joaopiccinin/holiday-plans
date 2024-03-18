@@ -3,12 +3,8 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HolidayPlanController;
+use App\Http\Controllers\PdfController;
 use App\Http\Controllers\UserController;
-
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
-
 
 Route::group([
     "middleware" => ["auth:api"]
@@ -18,9 +14,12 @@ Route::group([
     Route::get('/holidayplans/{holidayPlan}', [HolidayPlanController::class, 'show'])->name('holidayPlans.show');
     Route::put('/holidayplans/{holidayPlan}', [HolidayPlanController::class, 'update'])->name('holidayPlans.update');
     Route::delete('/holidayplans/{holidayPlan}', [HolidayPlanController::class, 'destroy'])->name('holidayPlans.destroy');
+    Route::get('holidayPlan/pdf/{holidayPlan}', [PdfController::class, 'holidayPlanPdfGenerate'])->name('holidayPlan.pdf');
 
     Route::delete("/logout", [UserController::class, "logout"])->name('user.logout');
     Route::get("/profile", [UserController::class, "profile"])->name('user.profile');
+
+
 });
 
 Route::post("/register", [UserController::class, "register"])->name('user.register');

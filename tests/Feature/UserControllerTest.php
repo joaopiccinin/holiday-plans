@@ -2,16 +2,14 @@
 
 namespace Tests\Feature;
 
-use App\Http\Controllers\UserController;
 use Tests\TestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Http\Request;
 use App\Models\User;
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Validation\ValidationException;
 
 class UserControllerTest extends TestCase
 {
-    use RefreshDatabase;
+    use DatabaseTransactions;
 
     public function testUserRegistrationSuccess()
     {
@@ -22,27 +20,87 @@ class UserControllerTest extends TestCase
             'password_confirmation' => 'password'
         ];
 
-        // Envia uma solicitação POST para a rota de registro com os dados do usuário
         $response = $this->postJson(route('user.register'), $userData);
 
-        // Verifica se a resposta tem o status 200 (OK)
+        // Verify status
         $response->assertStatus(200);
 
-        // Verifica se o usuário foi criado com os dados fornecidos
+        // Verify user data
         $this->assertDatabaseHas('users', [
             'name' => $userData['name'],
             'email' => $userData['email']
         ]);
     }
 
-    public function testUserRegistrationFailure()
+    public function testUserRegistrationFailureByEmailAlreadyExists()
     {
-        // First, create a user with a specific email
+        //Creating a user with a specific email
         $user = User::factory()->create(['email' => 'nametest@example.com']);
-
+        //In this application, the user's email is unique
         $response = $this->postJson(route('user.register'), $user->toArray());
 
         $this->assertEquals(422, $response->status());
         $this->assertArrayHasKey('email', $response->json()['errors']);
     }
+
+    public function testUserRegistrationFailureByInvalidData()
+    {
+        // First, create a user with a specific email
+        $userData = [
+            'name' => 'name test',
+            'email' => 'nametestexample.com',
+        ];
+
+        $response = $this->postJson(route('user.register'), $userData);
+
+        // Assert that the response status is 422 (Unprocessable Entity)
+        $response->assertStatus(422);
+
+        // Assert that the response contains the expected error message for login failure
+        $response->assertJsonValidationErrors(['email', 'password']);
+    }
+
+    public function testUserLoginSuccess()
+    {
+        // Envia uma solicitação POST para a rota de registro com os dados do usuário
+        User::factory()->create([
+            'email' => 'nametest2@example.com',
+            'password' => 'password'
+        ]);
+;
+        // Tenta fazer login com as credenciais do usuário recém-criado
+        $response = $this->postJson(route('user.login'), [
+            'email' => 'nametest2@example.com',
+            'password' => 'password'
+        ]);
+
+        // Verifica se o login foi bem-sucedido
+        $response->assertStatus(200);
+        $this->assertArrayHasKey('access_token', $response->json());
+    }
+
+    public function testUserLoginFailure()
+    {
+        // First, create a user with a specific email
+        User::factory()->create([
+            'email' => 'nametest2@example.com',
+            'password' => 'password'
+        ]);
+
+        $response = $this->postJson(route('user.login'), [
+            'email' => 'nametest2@example.com',
+            'password' => 'wrong_password', // Incorrect password
+        ]);
+
+        // Assert that the response status is 422 (Unprocessable Entity)
+        $response->assertStatus(422);
+
+        // Assert that the response contains the expected error message for login failure
+        $response->assertJson([
+            'status' => false,
+            'message' => 'Invalid credentials',
+        ]);
+    }
+
+
 }

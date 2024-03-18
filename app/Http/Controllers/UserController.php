@@ -19,14 +19,12 @@ class UserController extends Controller
                 "password" => "required|confirmed"
             ]);
 
-            // Author model
             User::create([
                 "name" => $request->name,
                 "email" => $request->email,
                 "password" => Hash::make($request->password)
             ]);
 
-            // Response
             return response()->json([
                 "status" => true,
                 "message" => "User created successfully"
@@ -65,14 +63,12 @@ class UserController extends Controller
             return response()->json([
                 "status" => false,
                 "message" => "Invalid credentials"
-            ]);
+            ], 422);
         } catch (ValidationException $e) {
             return response()->json(['errors' => $e->errors()], 422);
         }
-
     }
 
-    // Profile API (GET)
     public function profile()
     {
         $userdata = Auth::user();
