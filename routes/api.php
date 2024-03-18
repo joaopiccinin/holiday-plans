@@ -14,7 +14,7 @@ Route::group([
     Route::get('/holidayplans/{holidayPlan}', [HolidayPlanController::class, 'show'])->name('holidayPlans.show');
     Route::put('/holidayplans/{holidayPlan}', [HolidayPlanController::class, 'update'])->name('holidayPlans.update');
     Route::delete('/holidayplans/{holidayPlan}', [HolidayPlanController::class, 'destroy'])->name('holidayPlans.destroy');
-    Route::get('holidayPlan/pdf/{holidayPlan}', [PdfController::class, 'holidayPlanPdfGenerate'])->name('holidayPlan.pdf');
+    Route::get('holidayPlan/pdf/{id}', [PdfController::class, 'holidayPlanPdfGenerate'])->name('holidayPlan.pdf');
 
     Route::delete("/logout", [UserController::class, "logout"])->name('user.logout');
     Route::get("/profile", [UserController::class, "profile"])->name('user.profile');
