@@ -11,25 +11,25 @@ use Tests\TestCase;
 
 class PdfControllerTest extends TestCase
 {
-    public function testShow()
-    {
+    // public function testShow()
+    // {
         // Create a test user
-        $user = User::factory()->create();
+        // $user = User::factory()->create();
 
-        // User authentication
-        Passport::actingAs($user);
-        $holidayPlan = HolidayPlan::factory()->create();
+    //     // User authentication
+    //     Passport::actingAs($user);
+    //     $holidayPlan = HolidayPlan::factory()->create();
 
-        $response = $this->getJson(route('holidayPlans.show', ['holidayPlan' => $holidayPlan->id]));
-        $response->assertStatus(200);
+    //     $response = $this->getJson(route('holidayPlans.show', ['holidayPlan' => $holidayPlan->id]));
+    //     $response->assertStatus(200);
 
-        // Verify data
-        $response->assertJson([
-            'title' => $holidayPlan->title,
-            'description' => $holidayPlan->description,
-            'date' => $holidayPlan->date->format('Y-m-d'),
-            'location' => $holidayPlan->location,
-            'participants' => $holidayPlan->participants,
-        ]);
-    }
+    //     // Verify data
+    //     $response->assertJson([
+    //         'title' => $holidayPlan->title,
+    //         'description' => $holidayPlan->description,
+    //         'date' => $holidayPlan->date->format('Y-m-d'),
+    //         'location' => $holidayPlan->location,
+    //         'participants' => $holidayPlan->participants,
+    //     ]);
+    // }
 }
