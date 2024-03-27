@@ -88,9 +88,4 @@ class HolidayPlanController extends Controller
 
         return response()->json(['message' => 'Deleção concluída com sucesso'], 200);
     }
-
-    public function pdfGenerate()
-    {
-
-    }
 }
