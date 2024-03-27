@@ -4,32 +4,30 @@ namespace Tests\Feature;
 
 use App\Models\HolidayPlan;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Laravel\Passport\Passport;
 use Tests\TestCase;
 
 class PdfControllerTest extends TestCase
 {
-    // public function testShow()
-    // {
-        // Create a test user
-        // $user = User::factory()->create();
+    use DatabaseTransactions;
 
-    //     // User authentication
-    //     Passport::actingAs($user);
-    //     $holidayPlan = HolidayPlan::factory()->create();
+    public function testHolidayPlanPdfGenerate()
+    {
+        // Criar um plano de feriado fictício
+        $holidayPlan = HolidayPlan::factory()->create();
 
-    //     $response = $this->getJson(route('holidayPlans.show', ['holidayPlan' => $holidayPlan->id]));
-    //     $response->assertStatus(200);
+        // Simular a autenticação de um usuário
+        $user = User::factory()->create();
+        Passport::actingAs($user);
 
-    //     // Verify data
-    //     $response->assertJson([
-    //         'title' => $holidayPlan->title,
-    //         'description' => $holidayPlan->description,
-    //         'date' => $holidayPlan->date->format('Y-m-d'),
-    //         'location' => $holidayPlan->location,
-    //         'participants' => $holidayPlan->participants,
-    //     ]);
-    // }
+        // Chamar o método holidayPlanPdfGenerate
+        $response = $this->getJson(route('holidayPlan.pdf', ['id' => $holidayPlan->id]));
+
+        // Verificar se a resposta foi bem-sucedida
+        $response->assertStatus(200);
+
+        // Verificar se o conteúdo do PDF foi retornado
+        $response->assertHeader('Content-Type', 'application/pdf');
+    }
 }

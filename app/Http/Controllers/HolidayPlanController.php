@@ -49,7 +49,7 @@ class HolidayPlanController extends Controller
         }
     }
 
-    public function show(HolidayPlan $holidayPlan)
+    public function show(Request $request, HolidayPlan $holidayPlan)
     {
         $resource = [
             'title' => $holidayPlan->title,

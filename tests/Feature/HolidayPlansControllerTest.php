@@ -45,29 +45,6 @@ class HolidayPlansControllerTest extends TestCase
         $response->assertStatus(401);
     }
 
-    // public function testShow()
-    // {
-    //     // Create a test user
-    //     $user = User::factory()->create();
-
-    //     // User authentication
-    //     Passport::actingAs($user);
-    //     $holidayPlan = HolidayPlan::factory()->create();
-
-    //     $response = $this->getJson(route('holidayPlans.show', ['holidayPlan' => $holidayPlan]));
-    //     $response->dd();
-    //     $response->assertStatus(200);
-
-    //     // Verify data
-    //     $response->assertJsonFragment([
-    //         'title' => $holidayPlan->title,
-    //         'description' => $holidayPlan->description,
-    //         'date' => $holidayPlan->date->format('Y-m-d'),
-    //         'location' => $holidayPlan->location,
-    //         'participants' => $holidayPlan->participants,
-    //     ]);
-    // }
-
     public function testUpdate()
     {
         $user = User::factory()->create();
